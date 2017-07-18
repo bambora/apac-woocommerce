@@ -207,7 +207,6 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 		add_action( 'woocommerce_order_actions', array( $this, 'add_order_meta_box_actions' ) );
 		add_action( 'woocommerce_order_action_void_transaction', array( $this, 'process_void_transaction' ) );
 
-		add_action( 'valid_bambora_callback', array( $this, 'successful_request' ) );
 		add_action( 'woocommerce_api_' . strtolower( get_class() ), array( $this, 'check_callback' ) );
 		add_action( 'woocommerce_api_' . strtolower( get_class() ).'_usr', array( $this, 'check_callback_usr' ) );
 
@@ -787,25 +786,22 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 			$order_id = (int)$arr_wc[1];
 		}
 		
-		$customer_order = new WC_Order( $order_id );	
+		$customer_order = new WC_Order( $order_id );				
+		if($customer_order->status == 'processing'){
 		
-		
-		if($customer_order->status == 'processing'){		
 			$order_key = get_post_meta( $order_id, '_order_key');
-			include_once( dirname( __FILE__ ) . '/lib/bambora-apac-integrate.php' );	
-			$Int_Request = new Bambora_Apac_Integrate(); 
-			//$html = $Int_Request->getSuccessReponse($order_id,$order_key);
+		
 			echo "<script type='text/javascript'>
 
                 setTimeout(function() {
                   window.parent.location = '/checkout/order-received/".$order_id."/?key=".$order_key[0]."';
-                }, 3000);
-                
+                }, 3000);                
                     </script>";
 
 	       echo  '<div  style="margin:auto;width: 130px;">
 	            <img class="success-img" src="'.WP_PLUGIN_URL . '/' . plugin_basename( dirname( __FILE__ ) ) . '/assets/images/success.gif" >                                           
 	        </div>';
+	        die();
 		}
 		
 
