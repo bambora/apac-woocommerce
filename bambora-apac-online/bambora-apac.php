@@ -96,11 +96,12 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 		$this->liveTokenWSDL = 'https://www.ippayments.com.au/interface/api/sipp.asmx?WSDL';
 		$this->testBatchWSDL = 'https://demo.ippayments.com.au/interface/api/batch.asmx?WSDL';
 		$this->liveBatchWSDL = 'https://www.ippayments.com.au/interface/api/batch.asmx?WSDL';
-		$this->testIntUrl = 'https://demo.ippayments.com.au/access/index.aspx';
-		$this->liveIntUrl = 'https://www.ippayments.com.au/access/index.aspx';
-		$this->testInteParams = '?a=86258738&dl=checkoutv1_hpp_purchase';
-		$this->liveInteParams = '';
-
+		$this->testIntUrl = 'https://demo.bambora.co.nz/access/index.aspx';
+		$this->liveIntUrl = 'https://www.bambora.co.nz/access/index.aspx';
+		$this->testInteParams = '?a=85569861&dl='.$this->dl.'&accountnumber='.$this->test_api_account;
+		$this->liveInteParams = '?a=85569861&dl='.$this->dl.'&accountnumber='.$this->api_account;
+		
+	
 		$this->testEnvironmentUrl = 'https://demo.ippayments.com.au/interface/api/dts.asmx';
 		$this->liveEnvironmentUrl = 'https://www.ippayments.com.au/interface/api/dts.asmx';
 		$this->testTokenEnvironmentUrl = 'https://demo.ippayments.com.au/interface/api/sipp.asmx';
@@ -207,6 +208,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 		add_action( 'woocommerce_order_actions', array( $this, 'add_order_meta_box_actions' ) );
 		add_action( 'woocommerce_order_action_void_transaction', array( $this, 'process_void_transaction' ) );
 
+		//add_action( 'valid_bambora_callback', array( $this, 'successful_request' ) );
 		add_action( 'woocommerce_api_' . strtolower( get_class() ), array( $this, 'check_callback' ) );
 		add_action( 'woocommerce_api_' . strtolower( get_class() ).'_usr', array( $this, 'check_callback_usr' ) );
 
@@ -272,9 +274,9 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 				'desc_tip'	=> __( 'The Live API password in your Bambora account', 'bambora-apac' ),
 			),
 			'api_account' => array(
-				'title'		=> __( 'Live API Account', 'bambora-apac' ),
+				'title'		=> __( 'Live Account Number', 'bambora-apac' ),
 				'type'		=> 'text',
-				'desc_tip'	=> __( 'The Live API account in your Bambora account', 'bambora-apac' ),
+				'desc_tip'	=> __( 'The Live API Account Number in your Bambora account', 'bambora-apac' ),
 			),
 			
 			'test_api_login' => array(
@@ -288,9 +290,9 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 				'desc_tip'	=> __( 'The Test API password in your Bambora account', 'bambora-apac' ),
 			),
 			'test_api_account' => array(
-				'title'		=> __( 'Test API Account', 'bambora-apac' ),
+				'title'		=> __( 'Test Account Number', 'bambora-apac' ),
 				'type'		=> 'text',
-				'desc_tip'	=> __( 'The Test API account in your Bambora account', 'bambora-apac' ),
+				'desc_tip'	=> __( 'The Test API Account Number in your Bambora account', 'bambora-apac' ),
 			),			
 			'checkout_mode' => array(
 				'title'       => __( 'Checkout Method', 'bambora-apac' ),
@@ -797,11 +799,17 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
                   window.parent.location = '/checkout/order-received/".$order_id."/?key=".$order_key[0]."';
                 }, 3000);                
                     </script>";
-
-	       echo  '<div  style="margin:auto;width: 130px;">
-	            <img class="success-img" src="'.WP_PLUGIN_URL . '/' . plugin_basename( dirname( __FILE__ ) ) . '/assets/images/success.gif" >                                           
-	        </div>';
+		  echo  '<link rel="stylesheet" type="text/css" href="'.get_site_url() . '/wp-content/plugins/bambora-apac-online/assets/css/ui.bambora.1.2.0.css">'; 
+	       echo  '
+	       <div  style="margin:auto;width: 50px;">
+	       		<div class="spinner">
+				    <div class="spinner-left"></div>
+				    <div class="spinner-right"></div>
+				</div>
+			</div>
+			';
 	        die();
+
 		}
 		
 
@@ -825,8 +833,15 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 		$sessionid = rand(100000, 2500000).'_'.$order->id;
 		$sessionkey = rand(100000, 2500000).'_'.$order->id;
 	
-		$url = "UserName=".$UserName."&Password=".$Password."&DL=".$DL."&SessionID=".$sessionid ."&SessionKey=".$sessionkey."&ServerURL=".$serverURL."&UserURL=".$userURL."&Amount=".$amount;
+		$url = "UserName=".$UserName."&Password=".$Password."&DL=".$DL."&SessionID=".$sessionid ."&SessionKey=".$sessionkey."&ServerURL=".$serverURL."&UserURL=".$userURL."&Amount=".$amount.'&CustRef='.$order->id.'&CustNumber='.$CustNumber.'&AccountNumber='.$this->Account;
 		$return_arr = $Int_Request->getSST($this->IntegratedUrl,$url);
+
+		if(get_current_user_id()){
+			$CustNumber = get_current_user_id();
+		}else{
+			$CustNumber = 'N'.rand(100000, 2500000);
+		}
+
 
 		if($return_arr['sst']==""){
 			global $error;
@@ -836,8 +851,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 			wp_enqueue_script( 'bambora_checkout', plugins_url( 'assets/js/checkout-bambora.js', BAMBORA_APAC_MAIN_FILE ) );			
 			wp_enqueue_style( 'bambora_css_bootstrap', plugins_url( 'assets/css/bootstrap.css', BAMBORA_APAC_MAIN_FILE ) );
 			wp_enqueue_style( 'bambora_css__model', plugins_url( 'assets/css/modal.css', BAMBORA_APAC_MAIN_FILE ) );
-			//$html = $Int_Request->exeIntegratedCheckout($this->IntegratedUrl,$this->InteParams,$sessionid,$return_arr);
-			echo '<form action="'.$this->IntegratedUrl.$this->InteParams.'" target="payment-iframe" method="post" id="formme" >            
+			echo '<form action="'.$this->IntegratedUrl.'" target="payment-iframe" method="post" id="formme" >            
                     <input type="hidden" name="SessionId" value="'.$sessionid.'">
                     <input type="hidden" id="SST" name="SST" value="'.$return_arr['sst'].'">
                     <input type="submit" id="but01" value="post" style="display:none;">                    
@@ -915,11 +929,11 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 			// Create Params
 			$params = array();
 			$op = $params['operation'] = 'TokeniseCreditCard';
-			$params['CardNumber'] = str_replace(' ', '', $_POST['wc_bambora-card-number']);
-			$arrExpDate = explode('/', $_POST['wc_bambora-card-expiry']);
+			$params['CardNumber'] = str_replace(' ', '', $_POST['bambora_apac-card-number']);
+			$arrExpDate = explode('/', $_POST['bambora_apac-card-expiry']);
 			$params['ExpM'] = trim($arrExpDate[0]);
 			$params['ExpY'] = '20'.trim($arrExpDate[1]);
-			$params['CVN'] = $_POST['wc_bambora-card-cvc'];
+			$params['CVN'] = $_POST['bambora_apac-card-cvc'];
 			$params['Registered'] = "False";
 			$params['UserName'] = $this->UserName;
 			$params['Password'] = $this->Password;	
@@ -958,7 +972,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 					$token = new WC_Payment_Token_CC();
 					$token->set_token( (string)$transactionResponse->Token );
 					$token->set_card_type( strtolower( 'Card' ) );
-					$token->set_gateway_id( 'wc_bambora' );
+					$token->set_gateway_id( 'bambora_apac' );
 					$token->set_last4( substr( (string)$params['CardNumber'],-4) );
 					$token->set_expiry_month( (string)$params['ExpM'] );
 					$token->set_expiry_year( (string)$params['ExpY'] );
@@ -1020,7 +1034,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 				$tokens = WC_Payment_Tokens::get_customer_tokens(  $usrs_value->data->ID );
 				if(is_array($tokens)){
 					foreach ($tokens as $tokens_key => $tokens_value) {
-						if( $tokens_value->get_gateway_id() =="wc_bambora" ){
+						if( $tokens_value->get_gateway_id() =="bambora_apac" ){
 					
 							$ct_arr = explode(':', $tokens_value->get_card_type());
 							if(count($ct_arr)>0){
@@ -1686,7 +1700,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 		echo $post_detail->post_title.",".$post_detail->post_title."-Upload"."\n\n";
 
 		for ($i=0; $i < $this->maxbatchrows; $i++) { 
-			if(isset($post_meta['AccountNumber_'.$i][0]) && isset($post_meta['CustNumber_'.$i][0]) && isset($post_meta['Amount_'.$i][0]) ){
+			if(isset($post_meta['CustNumber_'.$i][0]) && isset($post_meta['Amount_'.$i][0]) ){
 				$cust = explode(':', $post_meta['CustNumber_'.$i][0]);
 				$amount = $post_meta['Amount_'.$i][0]*100;
 				echo $this->Account.",1,".$cust[0].",,".$cust[1].",".$post_id.",,".$amount.",,,,,,\n\n";
