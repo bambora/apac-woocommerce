@@ -11,12 +11,12 @@ WC tested up to: 2.3
 
 == Description ==
 
-Welcome to the Bambora APAC Plug-in for WooCommerce
+Welcome to the Bambora APAC Online Plug-in for WooCommerce
 https://www.bambora.com/en/au/online/overview/
 
 == Installation ==
 
-https:///www.bambora.com
+https://dev-apac.bambora.com/
 
 == Changelog ==
 
