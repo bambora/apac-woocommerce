@@ -31,7 +31,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 		$this->method_title = __( "Bambora APAC ", 'bambora-apac' );
 
 		// The description for this Payment Gateway, shown on the actual Payment options page on the backend
-		$this->method_description = __( "Welcome to the Bambora APAC Plug-in for WooCommerce. Need an Account? Check us out at <a href='https:///www.bambora.com'>bambora.com</a>", 'bambora-apac' );
+		$this->method_description = __( "Welcome to the Bambora APAC Plug-in for WooCommerce. Need an Account? Check us out at <a href='https://www.bambora.com'>bambora.com</a>", 'bambora-apac' );
 
 		// The title to be used for the vertical tabs that can be ordered top to bottom
 		$this->title = __( "Bambora APAC ", 'bambora-apac' );
