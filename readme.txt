@@ -23,3 +23,9 @@ https://dev-apac.bambora.com/
 = 1.1 =
 * Integrated checkout
 * Stabdard updates
+
+= 1.1.1 =
+* Fix package issue
+
+= 1.1.2 =
+* Fix production checkout message
