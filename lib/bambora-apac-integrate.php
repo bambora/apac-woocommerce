@@ -1,6 +1,5 @@
 <?php
 
-
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -10,8 +9,7 @@ class Bambora_Apac_Integrate {
 
     // Start getSST
     public function getSST($int_url,$url) { 
-      
-      
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL,$int_url);
         curl_setopt($ch, CURLOPT_POST, 1);

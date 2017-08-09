@@ -53,7 +53,20 @@ jQuery( function( $ ) {
 					live_account.show();
 				}
 			} );
-			$( '#woocommerce_bambora_apac_enabled_sandbox' ).change();			
+
+			$( '#woocommerce_bambora_apac_enabled_sandbox' ).change();
+
+            var dl = $( '#woocommerce_bambora_apac_dl' ).parents( 'tr' ).eq( 0 );
+            var save_card = $( '#woocommerce_bambora_apac_save_card_detail' ).parents( 'tr' ).eq( 0 );
+
+            if ( bambora_apac_admin.isAPIMode() ) {
+                dl.hide();
+                save_card.show();
+            } else {
+                dl.show();
+                save_card.hide();
+
+            }
 		}
 	};
 
@@ -88,3 +101,5 @@ jQuery( function( $ ) {
 
 	} );
 });
+
+
