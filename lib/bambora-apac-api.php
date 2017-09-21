@@ -1,4 +1,19 @@
 <?php
+/**
+ * Plugin Name: Bambora APAC Online Plug-in for WooCommerce.
+ * Plugin URI: https://dev-apac.bambora.com/
+ * Description:  Welcome to the Bambora APAC Plug-in for WooCommerce. Need an Account? Check us out at https://www.bambora.com
+ * Version: 1.1.2
+ * Author: Bambora APAC
+ * Author URI: http://www.bambora.com/
+ * Developer: Bambora APAC
+ * Developer URI: http://www.bambora.com/
+ * Text Domain: bambora-apac
+ *
+ * Copyright: © 2017 Bambora APAC.
+ * License: GNU General Public License v3.0
+ * License URI: http://www.gnu.org/licenses/gpl-3.0.html
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -312,7 +327,6 @@ class Bambora_Apac_Api extends SoapClient {
         $return .= 	'</Transaction>
 					]]> </dts:trnXML>
 		      	</dts:SubmitSinglePayment>';
-
         return 	$return;
     }
     // End SubmitSinglePaymentUsingCustomerRegisterBody

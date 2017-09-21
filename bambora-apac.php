@@ -145,15 +145,14 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 
 
         // Customer Registration for admin
-        if($this->payment_scheduling=='yes' && $this->save_card_method=='customerregistration'){
-
+        if($this->payment_scheduling=='yes'){
             add_action( 'init',  array($this, 'bspayment_postype') );
             add_action( 'add_meta_boxes', array($this, 'bp_postypesmetabox') );
             add_action( 'save_post', array($this, 'bp_save_bspayment') );
         }
 
         // Tokanisation for admin
-        if($this->batch_payment=='yes' && $this->save_card_method=='tokenisation'){
+        if($this->batch_payment=='yes' && $this->save_card_method=='customerregistration'){
 
             add_action( 'init',  array($this, 'bbpayment_postype') );
             add_action( 'add_meta_boxes', array($this, 'bb_postypesmetabox') );
@@ -310,7 +309,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
                 'desc_tip'    => __( 'The styling options of the Bambora integrated checkout page', 'bambora-apac' ),
                 'default'	=> 'checkout_v1_purchase',
             ),
-            /* 'save_card_detail' => array(
+             'save_card_detail' => array(
                 'title'		=> __( 'Save card at checkout', 'bambora-apac' ),
                 'label'		=> __( 'Enable merchant to save card details against account', 'bambora-apac' ),
                 'type'		=> 'checkbox',
@@ -321,7 +320,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
                 'type'        => 'select',
                 'desc_tip'    => __( 'Select Card Storage Method', 'bambora-apac' ),
                 'options'     => array(
-                    'tokenisation' => __( 'Tokenisation', 'bambora-apac' )
+                    'tokenisation' => __( 'Tokenisation', 'bambora-apac' ),
                     'customerregistration' => __( 'Customer Registration', 'bambora-apac' ),
                 ),
             ),
@@ -342,7 +341,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
                 'label'		=> __( 'Have you enabled 3D Secure or RED Enabled on your Bambora account? ', 'bambora-apac' ),
                 'type'		=> 'checkbox',
                 'default'	=> 'no',
-            )*/
+            )
         );
     }
     // End init_form_fields
@@ -382,14 +381,14 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
         if($this->checkout_mode=='api'){
             if($this->save_card_detail=='yes'){
                 $this->tokenization_script();
-                if($this->save_card_method!='customerregistration'){
+                if($this->bambora_product=='advance'){
                     $this->saved_payment_methods();
                 }
-
+               // $this->saved_payment_methods();
             }
             $this->form();
-            if ( $this->save_card_detail =='yes' ) {
-              //  $this->save_payment_method_checkbox();
+            if ( $this->save_card_detail =='yes' &&$this->bambora_product=='advance') {
+                $this->save_payment_method_checkbox();
             }
 
         }
@@ -421,7 +420,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
             $cr = '0';
             $token_card = '';
 
-            if($this->save_card_detail=='yes'){
+            if($this->save_card_detail=='yes' && $this->bambora_product=='advance'){
 
                 // If tokanisation is on and is it a saved card?
                 if(isset($_POST['wc-bambora_apac-payment-token']) && trim($_POST['wc-bambora_apac-payment-token'])!='new'){
@@ -467,7 +466,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
                     $params['TokeniseAlgorithmID'] = $this->TokeniseAlgorithmID;
 
                     $params['AccountNumber']=$this->Account;
-
+                    $params['CustomerStorgaeNumber'] = 'Vault-'.$this->Account;
 
                 }else{
                     // Payment via Customer Register
@@ -476,6 +475,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
                     $params['operation'] = 'SubmitSinglePaymentUsingCustomerRegister';
                     $params['CustRef'] = $customer_order->get_order_number();
                     $params['CustNumber'] = $customer_order->user_id;
+                    $params['CustomerStorgaeNumber'] = 'Vault-'.$this->Account;
                     $params['Amount'] = $customer_order->order_total*100;
                     $params['TrnType'] = '1';
                     $params['UserName'] = $this->UserName;
@@ -509,15 +509,16 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 
                 if($token=='1'){
                     $params['TokeniseAlgorithmID'] = $this->TokeniseAlgorithmID;
+                    $params['CustomerStorgaeNumber'] = 'Vault-'.$this->Account;
                 }
 
                 // Is CR available?
 
                 if($cr=='1'){
                     $params['operation'] = 'SubmitSinglePaymentCustomerRegister';
-                    $params['CustNumber'] = $customer_order->user_id;
                     $params['FirstName'] = $customer_order->billing_first_name;
                     $params['LastName'] = $customer_order->billing_last_name;
+                    $params['CustomerStorgaeNumber'] = 'Vault-'.$this->Account;
                 }
 
             }
@@ -936,7 +937,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
             $params = array();
             $op = $params['operation'] = 'TokeniseCreditCard';
             $params['CardNumber'] = str_replace(' ', '', sanitize_text_field($_POST['bambora_apac-card-number']));
-            $arrExpDate = explode('/', $_POST['bambora_apac-card-expiry']);
+            $arrExpDate = explode('/', sanitize_text_field($_POST['bambora_apac-card-expiry']));
             $params['ExpM'] = trim($arrExpDate[0]);
             $params['ExpY'] = '20'.trim($arrExpDate[1]);
             $params['CVN'] = sanitize_text_field($_POST['bambora_apac-card-cvc']);
@@ -1538,7 +1539,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
             return;
         }
         // verify that nonce is valid
-        if ( ! wp_verify_nonce( $_POST['bb_nonce'], 'bb_postypesmetabox' ) ) {
+        if ( ! wp_verify_nonce(sanitize_text_field($_POST['bb_nonce']) , 'bb_postypesmetabox' ) ) {
             return;
         }
         // if this is an autosave, our form has not been submitted, so do nothing
