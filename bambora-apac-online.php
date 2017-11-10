@@ -3,7 +3,7 @@
 * Plugin Name: Bambora APAC Online Plug-in for WooCommerce.
 * Plugin URI: https://dev-apac.bambora.com/
 * Description:  Welcome to the Bambora APAC Plug-in for WooCommerce. Need an Account? Check us out at https://www.bambora.com
-* Version: 1.1.2
+* Version: 1.1.2.1
 * Author: Bambora APAC
 * Author URI: http://www.bambora.com/
 * Developer: Bambora APAC
