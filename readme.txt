@@ -29,3 +29,7 @@ https://dev-apac.bambora.com/
 
 = 1.1.2 =
 * Fix production checkout message
+
+
+= 1.1.2.1 =
+* Add new account number and add customer storage id
