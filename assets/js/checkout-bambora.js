@@ -36,6 +36,12 @@ jQuery( function( $ ) {
 	bambora_checkout.init($( "form.checkout" ));
 	$("body").on("click", "button.close", function(){	  
 		$('#myModal').modal('hide');
-		window.parent.location = '/checkout/';
+		window.parent.location = 'wordpress/checkout/';
+	});
+
+	$("body").on("click", "button.btntest", function(){	  
+		$('#myModal').modal('hide');
+		alert('ss');
+		// window.parent.location = '/checkout/';
 	});
 });
