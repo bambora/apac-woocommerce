@@ -22,10 +22,17 @@ https://dev-apac.bambora.com/
 
 = 1.1 =
 * Integrated checkout
-* Stabdard updates
+* Standard updates
 
 = 1.1.1 =
 * Fix package issue
 
 = 1.1.2 =
 * Fix production checkout message
+
+
+= 1.1.2.1 =
+* Add new account number and add customer storage id
+
+= 1.1.3 =
+* Enable advance features such as Batch and Schedule payments
