@@ -1,0 +1,72 @@
+.btn {
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  min-width: 160px;
+  text-align: center;
+  border-radius: 0;
+  text-transform: uppercase;
+  margin: 10px 0;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+.btn-default {
+  background-color: #e84c3d;
+  color: #fff !important;
+  border-color: #cd3c2e;
+}
+.btn-default:hover,
+.btn-default:focus,
+.btn-default:active,
+.btn-default.active,
+.open .dropdown-toggle.btn-default {
+  color: #fff !important;
+  background-color: #cd3c2e;
+  border-color: #cd3c2e;
+}
+.btn.btn-sm {
+  padding: 8px;
+  font-size: 12px;
+  min-width: 105px;
+}
+.btn-dark {
+  color: #f1f1f1;
+  background-color: #333333;
+  border-color: #333333;
+}
+.btn-dark:hover,
+.btn-dark:focus,
+.btn-dark:active,
+.btn-dark.active,
+.open .dropdown-toggle.btn-dark {
+  color: #ffffff;
+  background-color: #666;
+  border-color: #666;
+}
+/* Modals
+---------------------------------- */
+.modal-open .page-wrapper {
+  -webkit-filter: blur(3px);
+  -moz-filter: blur(5px);
+  -o-filter: blur(5px);
+  -ms-filter: blur(5px);
+  filter: blur(5px);
+}
+.modal-content {
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+.modal-content .modal-header {
+  background-color: #e84c3d;
+}
+.modal-content .modal-title {
+  font-size: 24px;
+  color: #ffffff;
+}
+.modal-footer .btn {
+  margin: 0;
+}
