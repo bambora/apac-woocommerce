@@ -30,7 +30,7 @@ class Bambora_Apac_Api extends SoapClient {
     // End __construct
 
     // Start __doRequest
-    public function __doRequest($request, $location, $action, $version) {
+    public function __doRequest($request, $location, $action, $version, $one_way = NULL)  {
         $result = parent::__doRequest($request, $location, $action, $version);
         return $result;
     }

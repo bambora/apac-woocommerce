@@ -413,6 +413,11 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
         // Get this Order's information so that we know
         $customer_order = new WC_Order( $order_id );
 
+
+        $order = wc_get_order( $order_id );
+        $order_data = $order->get_data(); // The Order data
+
+
         if($this->checkout_mode=='api'){
 
             // Save card enabled?
@@ -459,7 +464,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 
                     $params['CustRef'] = $customer_order->get_order_number();
                     $params['CardNumber'] = $token_card;
-                    $params['Amount'] = $customer_order->order_total*100;
+                    $params['Amount'] =  $order->get_total() * 100;
                     $params['TrnType'] = '1';
                     $params['UserName'] = $this->UserName;
                     $params['Password'] = $this->Password;
@@ -474,9 +479,9 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
                     $op = 'SubmitSinglePayment';
                     $params['operation'] = 'SubmitSinglePaymentUsingCustomerRegister';
                     $params['CustRef'] = $customer_order->get_order_number();
-                    $params['CustNumber'] = $customer_order->user_id;
+                    $params['CustNumber'] = $order->get_user_id();
                     $params['CustomerStorgaeNumber'] = 'Vault-'.$this->Account;
-                    $params['Amount'] = $customer_order->order_total*100;
+                    $params['Amount'] = $order->get_total() * 100;
                     $params['TrnType'] = '1';
                     $params['UserName'] = $this->UserName;
                     $params['Password'] = $this->Password;
@@ -490,9 +495,9 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
                 $op  = 'SubmitSinglePayment';
                 $params['operation'] = 'SubmitSinglePayment';
 
-                $params['CustNumber'] = $customer_order->user_id;
+                $params['CustNumber'] = $order->get_user_id();
                 $params['CustRef'] = $customer_order->get_order_number();
-                $params['Amount'] = $customer_order->order_total*100;
+                $params['Amount'] = $order->get_total() * 100;
                 $params['TrnType'] = '1';
                 $params['AccountNumber']=$this->Account;
                 $params['CardNumber'] = str_replace(' ', '', $_POST['bambora_apac-card-number']);
@@ -500,7 +505,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
                 $params['ExpM'] = trim($arrExpDate[0]);
                 $params['ExpY'] = '20'.trim($arrExpDate[1]);
                 $params['CVN'] = sanitize_text_field($_POST['bambora_apac-card-cvc']);
-                $params['CardHolderName'] = $customer_order->billing_first_name.' '.$customer_order->billing_last_name;
+                $params['CardHolderName'] = $order_data['billing']['first_name'].' '.$order_data['billing']['last_name'];
                 $params['Registered'] = "False";
                 $params['UserName'] = $this->UserName;
                 $params['Password'] = $this->Password;
@@ -516,8 +521,8 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 
                 if($cr=='1'){
                     $params['operation'] = 'SubmitSinglePaymentCustomerRegister';
-                    $params['FirstName'] = $customer_order->billing_first_name;
-                    $params['LastName'] = $customer_order->billing_last_name;
+                    $params['FirstName'] = $order_data['billing']['first_name'];
+                    $params['LastName'] = $order_data['billing']['last_name'];
                     $params['CustomerStorgaeNumber'] = 'Vault-'.$this->Account;
                 }
 
@@ -1594,7 +1599,7 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
 
     // Start add_order_meta_box_actions
     function add_order_meta_box_actions( $actions ) {
-        $actions['void_transaction'] = __( 'Void Tranaction', $this->text_domain );
+        $actions['void_transaction'] = __( 'Void Transaction', 'bambora_apac' );
         return $actions;
     }
     // End add_order_meta_box_actions
