@@ -503,7 +503,11 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
                 $params['CardNumber'] = str_replace(' ', '', $_POST['bambora_apac-card-number']);
                 $arrExpDate = explode('/', sanitize_text_field($_POST['bambora_apac-card-expiry']));
                 $params['ExpM'] = trim($arrExpDate[0]);
-                $params['ExpY'] = '20'.trim($arrExpDate[1]);
+                $ExpDateYear = trim($arrExpDate[1]);     
+                if ( strlen($ExpDateYear) == 4 )
+                    $params['ExpY'] = $ExpDateYear;
+                else 
+                    $params['ExpY'] = '20'.$ExpDateYear;                
                 $params['CVN'] = sanitize_text_field($_POST['bambora_apac-card-cvc']);
                 $params['CardHolderName'] = $order_data['billing']['first_name'].' '.$order_data['billing']['last_name'];
                 $params['Registered'] = "False";
@@ -944,7 +948,11 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
             $params['CardNumber'] = str_replace(' ', '', sanitize_text_field($_POST['bambora_apac-card-number']));
             $arrExpDate = explode('/', sanitize_text_field($_POST['bambora_apac-card-expiry']));
             $params['ExpM'] = trim($arrExpDate[0]);
-            $params['ExpY'] = '20'.trim($arrExpDate[1]);
+            $ExpDateYear = trim($arrExpDate[1]);     
+            if ( strlen($ExpDateYear) == 4 )
+                $params['ExpY'] = $ExpDateYear;
+            else 
+                $params['ExpY'] = '20'.$ExpDateYear;
             $params['CVN'] = sanitize_text_field($_POST['bambora_apac-card-cvc']);
             $params['Registered'] = "False";
             $params['UserName'] = $this->UserName;
