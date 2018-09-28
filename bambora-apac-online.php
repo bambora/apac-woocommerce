@@ -3,7 +3,7 @@
 * Plugin Name: Bambora APAC Online Plug-in for WooCommerce.
 * Plugin URI: https://dev-apac.bambora.com/
 * Description:  Welcome to the Bambora APAC Plug-in for WooCommerce. Need an Account? Check us out at https://www.bambora.com
-* Version: 1.1.2.1
+* Version: 1.2.0
 * Author: Bambora APAC
 * Author URI: http://www.bambora.com/
 * Developer: Bambora APAC
@@ -33,7 +33,7 @@ define( 'BAMBORA_APAC_MAIN_FILE', __FILE__ );
 		// Checking whether WooCommerce is not installed return null
 		if ( ! class_exists( 'WC_Payment_Gateway' ) ) return;	
 		// If WooCommerce is installed include Gateway Class
-		include_once( plugin_dir_path(__FILE__).'bambora-apac.php' );
+		include_once( 'bambora-apac.php' );
 
 		// Adding Class to WooCommerce
 		add_filter( 'woocommerce_payment_gateways', 'wc_add_bambora_gateway' );

@@ -59,26 +59,32 @@ jQuery(function ($) {
             var save_card = $('#woocommerce_bambora_apac_save_card_detail').parents('tr').eq(0);
             var card_storage = $('#woocommerce_bambora_apac_save_card_method').parents('tr').eq(0);
             var batch_payment = $('#woocommerce_bambora_apac_batch_payment').parents('tr').eq(0);
-            var batch_schedule = $('#woocommerce_bambora_apac_payment_scheduling').parents('tr').eq(0);
             var red_3dsec = $('#woocommerce_bambora_apac_red_3dsec').parents('tr').eq(0);
-            red_3dsec.hide();
 
             if (bambora_apac_admin.isAPIMode()) {
                 dl.hide();
                 save_card.show();
-                card_storage.show();
-                batch_payment.show();
-                batch_schedule.show();
-
             } else {
                 dl.show();
                 save_card.hide();
-                card_storage.hide();
-                batch_payment.hide();
-                batch_schedule.hide();
 
             }
 
+            if (bambora_apac_admin.isReadyMode()) {
+                card_storage.hide();
+                save_card.hide();
+                red_3dsec.hide();
+            } else {
+                card_storage.show();
+                save_card.show();
+                red_3dsec.show();
+            }
+
+            if ($('#woocommerce_bambora_apac_save_card_method').val() == "customerregistration") {
+                batch_payment.show();
+            } else {
+                batch_payment.hide();
+            }
         }
     };
 
@@ -88,29 +94,33 @@ jQuery(function ($) {
 
         var dl = $('#woocommerce_bambora_apac_dl').parents('tr').eq(0);
         var save_card = $('#woocommerce_bambora_apac_save_card_detail').parents('tr').eq(0);
-        var card_storage = $('#woocommerce_bambora_apac_save_card_method').parents('tr').eq(0);
-        var batch_payment = $('#woocommerce_bambora_apac_batch_payment').parents('tr').eq(0);
-        var batch_schedule = $('#woocommerce_bambora_apac_payment_scheduling').parents('tr').eq(0);
-        var red_3dsec = $('#woocommerce_bambora_apac_red_3dsec').parents('tr').eq(0);
-        red_3dsec.hide();
 
         if (bambora_apac_admin.isAPIMode()) {
             dl.hide();
             save_card.show();
-            card_storage.show();
-            batch_payment.show();
-            batch_schedule.show();
-
         } else {
             dl.show();
             save_card.hide();
-            card_storage.hide();
-            batch_payment.hide();
-            batch_schedule.hide();
-
         }
     });
 
+    $('#woocommerce_bambora_apac_bambora_product').change(function () {
+
+        var card_storage = $('#woocommerce_bambora_apac_save_card_method').parents('tr').eq(0);
+        var save_card = $('#woocommerce_bambora_apac_save_card_detail').parents('tr').eq(0);
+        var red_3dsec = $('#woocommerce_bambora_apac_red_3dsec').parents('tr').eq(0);
+
+        if (bambora_apac_admin.isReadyMode()) {
+            card_storage.hide();
+            save_card.hide();
+            red_3dsec.hide();
+        } else {
+            card_storage.show();
+            save_card.show();
+            red_3dsec.show();
+        }
+
+    });
 
     $('#woocommerce_bambora_apac_bambora_product').change(function () {
 
@@ -127,6 +137,14 @@ jQuery(function ($) {
 
     });
 
+    $('#woocommerce_bambora_apac_save_card_method').change(function () {
+        var batch_payment = $('#woocommerce_bambora_apac_batch_payment').parents('tr').eq(0);
+        if ($('#woocommerce_bambora_apac_save_card_method').val() == "customerregistration") {
+            batch_payment.show();
+        } else {
+            batch_payment.hide();
+        }
+    });
 });
 
 

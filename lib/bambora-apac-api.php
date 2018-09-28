@@ -3,7 +3,7 @@
  * Plugin Name: Bambora APAC Online Plug-in for WooCommerce.
  * Plugin URI: https://dev-apac.bambora.com/
  * Description:  Welcome to the Bambora APAC Plug-in for WooCommerce. Need an Account? Check us out at https://www.bambora.com
- * Version: 1.1.2.1
+ * Version: 1.2.0
  * Author: Bambora APAC
  * Author URI: http://www.bambora.com/
  * Developer: Bambora APAC
@@ -30,7 +30,7 @@ class Bambora_Apac_Api extends SoapClient {
     // End __construct
 
     // Start __doRequest
-    public function __doRequest($request, $location, $action, $version) {
+    public function __doRequest($request, $location, $action, $version, $one_way = NULL)  {
         $result = parent::__doRequest($request, $location, $action, $version);
         return $result;
     }
@@ -85,10 +85,6 @@ class Bambora_Apac_Api extends SoapClient {
 
             case 'TokeniseCreditCard':
                 return $this->createTokeniseCreditCardBody($params);
-                break;
-
-            case 'RegisterSingleCustomer':
-                return $this->createCRCreditCardBody($params);
                 break;
 
             case 'SubmitSinglePaymentCustomerRegister':
@@ -221,35 +217,6 @@ class Bambora_Apac_Api extends SoapClient {
     }
     // End createTokeniseCreditCardBody
 
-
-    // Start createCRCreditCardBody
-    function createCRCreditCardBody($params){
-
-
-        $return = '<sipp:RegisterSingleCustomer>
-        <sipp:registerSingleCustomerXML><![CDATA[';
-        $return .=  '<Register>';
-        $return .=  '<Customer>';
-        $return .=  '<CustomerStorageNumber>'.$params['CustomerStorageNumber'].'</CustomerStorageNumber>';
-        $return .=  '<CustNumber>'.$params['CustNumber'].'</CustNumber>';
-        $return .=  '<CreditCard>';
-        $return .=  '<CardNumber>'.$params['CardNumber'].'</CardNumber>'; 
-        $return .=  '<ExpM>'.$params['ExpM'].'</ExpM>'; 
-        $return .=  '<ExpY>'.$params['ExpY'].'</ExpY>';
-        $return .=  '</CreditCard>';
-        $return .=  '</Customer>';
-        $return .=  '<Security>'; 
-        $return .=  '<UserName>'.$params['UserName'].'</UserName>';
-        $return .=  '<Password>'.$params['Password'].'</Password>';
-        $return .=  '</Security>';
-        $return .=  '</Register>
-        ]]> </sipp:registerSingleCustomerXML>
-              </sipp:RegisterSingleCustomer>';
-
-        return  $return;
-    }
-    // End createCRCreditCardBody
-
     // Start SubmitSinglePaymentToken
     function SubmitSinglePaymentToken($params){
 
@@ -368,7 +335,9 @@ class Bambora_Apac_Api extends SoapClient {
     function SubmitPaymentScheduleBody($params){
 
         $return = '<dts:SubmitPaymentSchedule>
+		         <!--Optional:-->
 		         <dts:scheduleXML><![CDATA[';
+
 
         $return .= 	'<Schedule>';
         $return .= 	'<CustNumber>'.$params['CustNumber'].'</CustNumber>';
@@ -382,7 +351,7 @@ class Bambora_Apac_Api extends SoapClient {
         $return .= 	'<Frequency>'.$params['Frequency'].'</Frequency>';
         $return .= 	'<StartDate>'.$params['StartDate'].'</StartDate>';
         if(isset($params['EndPaymentDate'])){
-            $return .= 	'<EndDate>'.$params['EndPaymentDate'].'</EndDate>';
+            $return .= 	'<EndPaymentDate>'.$params['EndPaymentDate'].'</EndPaymentDate>';
         }
         if(isset($params['EndPaymentCount'])){
             $return .= 	'<EndPaymentCount>'.$params['EndPaymentCount'].'</EndPaymentCount>';
@@ -429,36 +398,6 @@ class Bambora_Apac_Api extends SoapClient {
     }
     // End createSubmitBatchTrnFileBody
 
-
-    // Start createSubmitBatchv2TrnFileBody
-    function createSubmitBatchv2TrnFileBody($params,$url){
-
-        $return = '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:bat="'.$url.'">
-                   <soap:Header/>
-                   <soap:Body>';
-        $return .= '<bat:SubmitBatchTrnFile>';
-        $return .= '<bat:trn>';
-        $return .= '<bat:userName>'.$params['userName'].'</bat:userName>';
-        $return .= '<bat:password>'.$params['password'].'</bat:password>';
-        $return .= '<bat:description>'.$params['description'].'</bat:description>';
-        $return .= '<bat:batchNumber>'.$params['batchNumber'].'</bat:batchNumber>';
-        $return .= '<bat:trnTypes>1</bat:trnTypes>';
-        $return .= '<bat:zipped>0</bat:zipped>';
-        $return .= '<bat:fileLength>'.$params['fileLength'].'</bat:fileLength>';
-        $return .= '<bat:fileCRC32>0</bat:fileCRC32>';
-        $return .= '<bat:b64TransactionFileData>';
-        $return .=  $params['b64TransactionFileData'];
-        $return .= '</bat:b64TransactionFileData>';
-        $return .= '</bat:trn>';
-        $return .= '</bat:SubmitBatchTrnFile>';
-        $return .= ' </soap:Body>
-                        </soap:Envelope>';
-
-        return $return;
-    }
-    // End createSubmitBatchv2TrnFileBody
-
-
     // Start createAuthoriseBatchTrnFileBody
     function createAuthoriseBatchTrnFileBody($params,$url){
 
@@ -477,24 +416,6 @@ class Bambora_Apac_Api extends SoapClient {
     }
     // End createAuthoriseBatchTrnFileBody
 
-    // Start createAuthoriseBatchv2TrnFileBody
-    function createAuthoriseBatchv2TrnFileBody($params,$url){
-
-        $return = '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:bat="'.$url.'">';
-        $return .= '<soap:Header/>';
-        $return .= '<soap:Body>';
-        $return .= '<bat:AuthoriseBatchTrnFile>';
-        $return .= '<bat:userName>'.$params['userName'].'</bat:userName>';
-        $return .= '<bat:password>'.$params['password'].'</bat:password>';
-        $return .= '<bat:uniqueBatchIdentifier>'.$params['uniqueBatchIdentifier'].'</bat:uniqueBatchIdentifier>';
-        $return .= '</bat:AuthoriseBatchTrnFile>';
-        $return .= '</soap:Body>';
-        $return .= '</soap:Envelope>';
-
-        return $return;
-    }
-    // End createAuthoriseBatchv2TrnFileBody
-    
     // Start __APIResposeHandler
     function __APIResposeHandler($respose){
 
