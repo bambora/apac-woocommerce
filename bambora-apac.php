@@ -555,6 +555,9 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
                 throw new Exception( __( 'Bambora Response was empty.', 'wc_bambora' ) );
             }
 
+            // REIGN logger
+            $this->logBambora( $arrTransactionResponse, $order_id );
+
             // Test the code to know if the transaction went through or not.
             // 0 means the transaction was a success
             if (  $transactionResponse->ResponseCode == '0'  ) {
@@ -628,6 +631,10 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
                 'redirect'    => $order->get_checkout_payment_url( true ),
             );
         }
+
+
+          
+
 
     }
     // End process_payment
@@ -1840,4 +1847,20 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
         $logger->add( 'wc_bambora', $message);
     }
     // End log
+
+    // REIGN WC logger
+    function logBambora( $bambora_log, $order_id ) {
+        if ( true === WP_DEBUG ) {
+            $log = new WC_Logger();
+            $log_header = 'Order ID: ' . $order_id;
+            $log->add ( 'wc_bambora', $log_header );
+            if ( is_array( $bambora_log ) || is_object( $bambora_log ) ) {
+                $log_entry = print_r( $bambora_log, true );
+                $log->add( 'wc_bambora', $log_entry );
+            } else {
+                $log->add( 'wc_bambora', $bambora_log );
+            }
+        }
+    }
+
 }
