@@ -9,7 +9,7 @@ URI: http://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 2.2
 WC tested up to: 3.4.5
 
-Welcome to the Bambora APAC Online Plugin for WooCommerce
+Welcome to the Bambora APAC Online Plugin for WooCommerce. 
 
 == Description ==
 
@@ -35,7 +35,8 @@ https://dev-apac.bambora.com/shopping-carts/guides/shopping-carts/woocommerce
 * Various bug and compatibility fixes
 * Improved transaction debug logging available via WooCommerce > Status > Logs when WP_DEBUG is switched on
 
+= 1.2 =
+* Bug fixes
+
 = 1.1.2.1 =
 * Initial release to the Wordpress marketplace
-
-
