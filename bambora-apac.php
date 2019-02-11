@@ -954,7 +954,10 @@ class Bambora_Apac extends WC_Payment_Gateway_CC {
             $op = $params['operation'] = 'TokeniseCreditCard';
             $params['CardNumber'] = str_replace(' ', '', sanitize_text_field($_POST['bambora_apac-card-number']));
             $arrExpDate = explode('/', sanitize_text_field($_POST['bambora_apac-card-expiry']));
-            $params['ExpM'] = trim($arrExpDate[0]);
+            // $params['ExpM'] = trim($arrExpDate[0]);
+            $params['ExpM'] =  sprintf('%02d',$arrExpDate[0]);
+
+
             $ExpDateYear = trim($arrExpDate[1]);     
             if ( strlen($ExpDateYear) == 4 )
                 $params['ExpY'] = $ExpDateYear;
