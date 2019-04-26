@@ -31,6 +31,9 @@ https://dev-apac.bambora.com/shopping-carts/guides/shopping-carts/woocommerce
 
 == Changelog ==
 
+= 1.2.2 =
+* MOTO vs "Web Site" fix
+
 = 1.2.1 =
 * Various bug and compatibility fixes
 * Improved transaction debug logging available via WooCommerce > Status > Logs when WP_DEBUG is switched on
